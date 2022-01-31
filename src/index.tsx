@@ -1,56 +1,59 @@
-import React, { useRef } from 'react';
+import React from 'react';
 import ReactDOM from 'react-dom';
 import "./styles.scss"
 import imageUrl from "./assets/img/image.jpeg";
-import { useEvt } from "evt/hooks";
-import { Evt } from "evt";
-
-let y = 0;
+import { makeStyles } from "./theme";
+import { Header } from "./Header";
+import { SideBar } from "./SideBar";
 
 function App() {
-  //const headerRef = useRef<HTMLHeadingElement>(null);
-  const ref = useRef<HTMLDivElement>(null);
-  useEvt(ctx => {
-    Evt.from(ctx, window, "wheel").attach((e) => {
-      if(!ref.current) return;
-      console.log(ref.current.clientHeight);
-      /*console.log(ref.current.clientHeight);
-      console.log(ref.current.clientTop);*/
-    })
-  }, []);
+  const { classes } = useStyles();
 
-  return <div className="contentWrapper">
-    <header /*ref={headerRef}*/ id="header">Header</header>
 
-    <section id="section">
-      <h1>Section with articles</h1>
-      <div className="articlesAndAsideWrapper">
-        <div ref={ref} className="articlesWrapper">
-          {
-            [1, 2, 3, 4].map(number =>
-              <div key={number} className="articleWrapper">
-                <article>
-                  <h2>Article</h2>
-                  <p>
-                    Proin et pharetra erat, vel posuere sem. Nullam scelerisque, libero vel accumsan gravida, nibh libero sodales ante, vel fermentum turpis tortor nec dolor. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Suspendisse in aliquet orci. Nullam sed ullamcorper ante, sed finibus tortor. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Nullam ex sapien, blandit nec sodales sed, molestie non tellus. Donec urna dolor, dignissim a tristique sit amet, finibus at nulla. Nam porta ante turpis, ac egestas ligula sodales sit amet. Sed tincidunt imperdiet semper. Nulla eu lorem vulputate, fringilla justo vitae, mollis nunc. Donec molestie libero ac mi sodales, at feugiat velit rhoncus. Fusce ligula nisl, bibendum vestibulum maximus et, semper ut arcu. Donec commodo metus mauris, quis blandit urna vulputate sed. In id lacus ut odio eleifend efficitur.
-                  </p>
-                </article>
-                <aside>
-                  <img src={imageUrl} alt="palm trees" />
-                </aside>
+  return <div className={classes.root}>
+    <Header />
+
+    <section className={classes.section}>
+      <div className={classes.articleWrapper}>
+        {
+          [1, 2, 3, 4, 5].map(number =>
+            <article key={number}>
+              <div>
+                <h2>Article {number}</h2>
+                <p>
+                  It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout. The point of using Lorem Ipsum is that it has a more-or-less normal distribution of letters, as opposed to using 'Content here, content here', making it look like readable English. Many desktop publishing packages and web page editors now use Lorem Ipsum as their default model text, and a search for 'lorem ipsum' will uncover many web sites still in their infancy. Various versions have evolved over the years, sometimes by accident, sometimes on purpose (injected humour and the like).
+                </p>
               </div>
-            )
-          }
-        </div>
-        <div /*ref={sidebarRef}*/ id="sidebar">
+              <img src={imageUrl} alt="article illustration" />
 
-        </div>
+            </article>)
 
+        }
       </div>
+
+      <SideBar />
+
     </section>
 
   </div>
 }
+const useStyles = makeStyles()({
+  "root": {
+    "position": "relative"
+  },
+  "section": {
+    "display": "flex",
+    "flexDirection": "row",
+    "paddingLeft": "100px",
+    "backgroundColor": "lightblue",
+  },
+  "articleWrapper": {
+    "flex": 1.5,
+    "& img": {
+      "width": "100%"
+    }
+  },
+})
 
 ReactDOM.render(
   <React.StrictMode>
@@ -58,4 +61,5 @@ ReactDOM.render(
   </React.StrictMode>,
   document.getElementById('root')
 );
+
 
