@@ -9,36 +9,60 @@ import { useConst } from "powerhooks/useConst";
 export const SideBar = memo(() => {
 
 	const [contentPusherMargin, setContentPusherMargin] = useState(0);
-	const [scrollDirection, setScrollDirection] = 
-	useState<"up" | "down">("down");
+	const [scrollDirection, setScrollDirection] =
+		useState<"up" | "down">("down");
 	const { domRect: { height }, ref } = useDomRect();
 
-	const scrollValue = useConst(()=>{
-		return {
-			"y": 0
-		}
-	});
+	let { scrollY } = useConst(() => ({ "scrollY": 0 }));
 
 	useEvt(ctx => {
 		Evt.from(ctx, window, "scroll").attach(e => {
 
-			if(scrollValue.y > window.scrollY){
+			if (scrollY > window.scrollY) {
 				setScrollDirection("up")
 			}
 
-			if(scrollValue.y < window.scrollY){
+			if (scrollY < window.scrollY) {
 				setScrollDirection("down");
 			}
 
-			scrollValue.y = window.scrollY;
-		})
+			scrollY = window.scrollY;
+		});
 
-	},[])
+	}, []);
 
 
-	const { classes } = useStyles({ 
-		contentPusherMargin, 
-		scrollDirection ,
+
+	useEffect(() => {
+
+		const hiddenPartHeight = height - window.innerHeight + 100;
+
+		(() => {
+			console.log(hiddenPartHeight);
+			if(hiddenPartHeight <= 0){
+				return;
+			}
+
+			if (scrollDirection === "up") {
+				if (window.scrollY < hiddenPartHeight) {
+					return;
+				};
+
+				setContentPusherMargin(window.scrollY - hiddenPartHeight);
+			};
+
+			if (scrollDirection === "down") {
+				setContentPusherMargin(window.scrollY);
+			}
+
+		})()
+	}, [scrollDirection, height]);
+
+
+
+	const { classes } = useStyles({
+		contentPusherMargin,
+		scrollDirection,
 		"asideHeight": height
 
 	});
@@ -82,10 +106,22 @@ const useStyles = makeStyles<{
 		},
 		"contentWrapper": {
 			"position": "sticky",
-			"border": "solid red 2px",
+			...(()=>{
+				const value = 40;
+
+				return {
+					"paddingTop": value,
+					"paddingBottom": value
+				}
+			})(),
+			"backgroundColor": "orange",
 			...(() => {
 				const value = asideHeight - window.innerHeight;
-				console.log(`value :${value}`)
+				if(value + 100 <= 0){
+					return {
+						"top": 100
+					}
+				}
 				if (scrollDirection === "down") {
 					return {
 						"top": -value
@@ -93,7 +129,7 @@ const useStyles = makeStyles<{
 				}
 
 				return {
-					"bottom": -value
+					"bottom": -value - 100
 				}
 
 			})()
