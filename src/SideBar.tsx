@@ -37,32 +37,36 @@ export const SideBar = memo(() => {
 
 		const hiddenPartHeight = height - window.innerHeight + 100;
 
-		(() => {
-			console.log(hiddenPartHeight);
-			if(hiddenPartHeight <= 0){
-				return;
-			}
+		if (hiddenPartHeight <= 0) {
+			return;
+		}
 
-			if (scrollDirection === "up") {
+		switch (scrollDirection) {
+			case "up":
 				if (window.scrollY < hiddenPartHeight) {
-					return;
+					break;
 				};
+				if (
+					window.scrollY < contentPusherMargin || 
+					contentPusherMargin === 0 || 
+					window.scrollY > contentPusherMargin + hiddenPartHeight
+				) {
+					setContentPusherMargin(window.scrollY - hiddenPartHeight);
+				}; 
+				break;
 
-				setContentPusherMargin(window.scrollY - hiddenPartHeight);
-			};
+			case "down":
+				if (window.scrollY < contentPusherMargin) {
+					setContentPusherMargin(window.scrollY);
+				}
+		}
 
-			if (scrollDirection === "down") {
-				setContentPusherMargin(window.scrollY);
-			}
-
-		})()
-	}, [scrollDirection, height]);
+	}, [scrollDirection]);
 
 
 
 	const { classes } = useStyles({
 		contentPusherMargin,
-		scrollDirection,
 		"asideHeight": height
 
 	});
@@ -85,10 +89,9 @@ export const SideBar = memo(() => {
 
 const useStyles = makeStyles<{
 	contentPusherMargin: number;
-	scrollDirection: "up" | "down";
 	asideHeight: number
 }>()(
-	(...[, { contentPusherMargin, scrollDirection, asideHeight }]) => ({
+	(...[, { contentPusherMargin, asideHeight }]) => ({
 		"root": {
 			"flex": "0.5",
 			"backgroundColor": "lavender",
@@ -104,9 +107,12 @@ const useStyles = makeStyles<{
 			}
 
 		},
+		"contentPusher": {
+			"marginTop": contentPusherMargin,
+		},
 		"contentWrapper": {
 			"position": "sticky",
-			...(()=>{
+			...(() => {
 				const value = 40;
 
 				return {
@@ -117,25 +123,16 @@ const useStyles = makeStyles<{
 			"backgroundColor": "orange",
 			...(() => {
 				const value = asideHeight - window.innerHeight;
-				if(value + 100 <= 0){
+				if (value + 100 <= 0) {
 					return {
 						"top": 100
 					}
 				}
-				if (scrollDirection === "down") {
-					return {
-						"top": -value
-					}
-				}
-
 				return {
+					"top": -value,
 					"bottom": -value - 100
 				}
 
 			})()
-		},
-		"contentPusher": {
-			"marginTop": contentPusherMargin
-
 		}
 	}))
