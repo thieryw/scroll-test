@@ -1,6 +1,7 @@
 import { memo } from "react";
 import { makeStyles } from "./theme";
 
+export const headerHeight = 100;
 
 
 export const Header = memo(() => {
@@ -15,7 +16,7 @@ const useStyles = makeStyles()({
 		"root": {
 			"backgroundColor": "darkblue",
 			"color": "white",
-			"height": "100px",
+			"height": headerHeight,
 			"fontSize": "2rem",
 			"display": "flex",
 			"alignItems": "center",

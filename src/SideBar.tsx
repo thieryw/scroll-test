@@ -1,9 +1,11 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { memo, useState, useEffect } from "react";
 import { makeStyles } from "./theme";
 import { useEvt } from "evt/hooks";
 import { Evt } from "evt";
 import { useDomRect } from "powerhooks/useDomRect";
 import { useConst } from "powerhooks/useConst";
+import { headerHeight } from "./Header";
 
 
 export const SideBar = memo(() => {
@@ -16,7 +18,7 @@ export const SideBar = memo(() => {
 	let { scrollY } = useConst(() => ({ "scrollY": 0 }));
 
 	useEvt(ctx => {
-		Evt.from(ctx, window, "scroll").attach(e => {
+		Evt.from(ctx, window, "scroll").attach(() => {
 
 			if (scrollY > window.scrollY) {
 				setScrollDirection("up")
@@ -35,24 +37,24 @@ export const SideBar = memo(() => {
 
 	useEffect(() => {
 
-		const hiddenPartHeight = height - window.innerHeight + 100;
+		const overflowingPartHeight = height - window.innerHeight + headerHeight;
 
-		if (hiddenPartHeight <= 0) {
+		if (overflowingPartHeight <= 0) {
 			return;
 		}
 
 		switch (scrollDirection) {
 			case "up":
-				if (window.scrollY < hiddenPartHeight) {
+				if (window.scrollY < overflowingPartHeight) {
 					break;
 				};
 				if (
-					window.scrollY < contentPusherMargin || 
-					contentPusherMargin === 0 || 
-					window.scrollY > contentPusherMargin + hiddenPartHeight
+					window.scrollY < contentPusherMargin ||
+					contentPusherMargin === 0 ||
+					window.scrollY > contentPusherMargin + overflowingPartHeight
 				) {
-					setContentPusherMargin(window.scrollY - hiddenPartHeight);
-				}; 
+					setContentPusherMargin(window.scrollY - overflowingPartHeight);
+				};
 				break;
 
 			case "down":
@@ -123,14 +125,14 @@ const useStyles = makeStyles<{
 			"backgroundColor": "orange",
 			...(() => {
 				const value = asideHeight - window.innerHeight;
-				if (value + 100 <= 0) {
+				if (value + headerHeight <= 0) {
 					return {
-						"top": 100
+						"top": headerHeight
 					}
 				}
 				return {
 					"top": -value,
-					"bottom": -value - 100
+					"bottom": -value - headerHeight
 				}
 
 			})()
