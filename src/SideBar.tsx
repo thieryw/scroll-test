@@ -4,7 +4,6 @@ import { makeStyles } from "./theme";
 import { useEvt } from "evt/hooks";
 import { Evt } from "evt";
 import { useDomRect } from "powerhooks/useDomRect";
-import { useConst } from "powerhooks/useConst";
 import { headerHeight } from "./Header";
 
 
@@ -15,20 +14,19 @@ export const SideBar = memo(() => {
 		useState<"up" | "down">("down");
 	const { domRect: { height }, ref } = useDomRect();
 
-	let { scrollY } = useConst(() => ({ "scrollY": 0 }));
-
 	useEvt(ctx => {
+		let previousScrollY = 0;
 		Evt.from(ctx, window, "scroll").attach(() => {
 
-			if (scrollY > window.scrollY) {
+			if (previousScrollY > window.scrollY) {
 				setScrollDirection("up")
 			}
 
-			if (scrollY < window.scrollY) {
+			if (previousScrollY < window.scrollY) {
 				setScrollDirection("down");
 			}
 
-			scrollY = window.scrollY;
+			previousScrollY = window.scrollY;
 		});
 
 	}, []);
