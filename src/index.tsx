@@ -10,21 +10,20 @@ import { headerHeight } from "./Header";
 function App() {
   const { classes } = useStyles();
 
-  console.log("ok");
 
   return <div className={classes.root}>
-    <Header />
+    <Header title="Title" />
 
     <section className={classes.section}>
       <div className={classes.articleWrapper}>
         {
           [1, 2, 3, 4, 5].map(number =>
-            <>
+            <div key={number}>
               {
                 number === 3 &&
                 <div className={classes.stickyPart}><h3>Sticky Part</h3></div>
               }
-              <article key={number}>
+              <article>
                 <div>
                   <h2>Article {number}</h2>
                   <p>
@@ -34,7 +33,7 @@ function App() {
                 <img src={imageUrl} alt="article illustration" />
 
               </article>
-            </>)
+            </div>)
 
         }
       </div>
