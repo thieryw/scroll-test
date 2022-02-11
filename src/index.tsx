@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import ReactDOM from 'react-dom';
 import "./styles.scss"
 import imageUrl from "./assets/img/image.jpeg";
@@ -9,21 +9,21 @@ import { useDomRect } from "powerhooks/useDomRect";
 
 function App() {
   const { ref: sectionRef, domRect: { height: sectionHeight } } = useDomRect();
+  const [wrapperPosY, setWrapperPosY] = useState(0);
 
 
   useEvt(ctx => {
     Evt.from(ctx, window, "scroll").attach((e) => {
 
-      console.log("ok");
-
-
+      setWrapperPosY(-window.scrollY);
 
     })
 
   }, []);
 
   const { classes } = useStyles({
-    "sectionHeight": sectionHeight
+    sectionHeight,
+    wrapperPosY
   });
 
 
@@ -67,8 +67,12 @@ function App() {
 
   </div>
 }
-const useStyles = makeStyles<{ sectionHeight: number }>()(
-  (...[, { sectionHeight }]) => ({
+const useStyles = makeStyles<{ 
+  sectionHeight: number ;
+  wrapperPosY: number;
+
+}>()(
+  (...[, { sectionHeight, wrapperPosY }]) => ({
     "root": {
       "position": "relative",
       "height": sectionHeight
@@ -76,6 +80,9 @@ const useStyles = makeStyles<{ sectionHeight: number }>()(
     "section": {
       "position": "fixed",
       "display": "flex",
+      "transition": "transform 600ms",
+      "transitionTimingFunction": "ease-out",
+      "transform": `translateY(${wrapperPosY}px)`,
       "flexDirection": "row",
       "backgroundColor": "lightblue",
       ...(() => {
