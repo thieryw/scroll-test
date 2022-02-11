@@ -61,6 +61,9 @@ const useStyles = makeStyles<{
 	windowWidth: number;
 }>()((...[, { linksWidth, titleWidth, windowWidth }]) => {
 	const isCollapsed = linksWidth + 220 > windowWidth - titleWidth;
+
+	console.log(linksWidth);
+	console.log(titleWidth);
 	return {
 		"root": {
 			"overflow": "hidden",
